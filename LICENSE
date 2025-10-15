@@ -1,0 +1,31 @@
+Copyright 2025 Kyle Farwell
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+
+---
+
+The above license does not apply to the following third-party files, which are
+covered by their respective terms:
+
+src/img/tiles.png: Riichi asset by gamblemountain
+https://gamblemountain.itch.io/riichi-asset
+
+src/snd/*: Mahjong & UI sounds by T-STUDIO
+https://t-studio-tst.itch.io/free-sound-mahjong-sound-pack
+https://tnosite.com/en/user-interface-sound-effects/
+
+src/font/CompassGold.ttf: Compass Gold by somepx
+https://somepx.itch.io/humble-fonts-gold
+
+src/lib/shove.lua, src/lib/shove-profiler.lua: shove by Oval Tutu (MIT)
+https://github.com/Oval-Tutu/shove
