@@ -297,10 +297,11 @@ runs:
         -project ./love-actions-macos-portable/love/platform/xcode/love.xcodeproj \
         -scheme love-macosx \
         -configuration Release \
+        -derivedDataPath ./love-actions-macos-portable/love/platform/xcode/build \
         CODE_SIGN_IDENTITY="-" \
         OTHER_CFLAGS="-Wno-unused-parameter -Wno-sign-compare -Wno-conditional-uninitialized -Wno-strict-prototypes"
 
-        cp -R ./love-actions-macos-portable/love/platform/xcode/build/Release/${{ inputs.product-name }}.app ./love-actions-macos-portable/
+        cp -R ./love-actions-macos-portable/love/platform/xcode/build/Build/Products/Release/${{ inputs.product-name }}.app ./love-actions-macos-portable/
     - name: Create dmg file
       if: "${{ inputs.dmg-background-path != '' && inputs.dmg-icon-position != '' && inputs.dmg-icon-size != '' && inputs.dmg-link-position != '' && inputs.dmg-text-size != '' && inputs.dmg-volume-icon-path != '' && inputs.dmg-volume-name != '' && inputs.dmg-window-position != '' && inputs.dmg-window-size != '' }}"
       shell: bash
