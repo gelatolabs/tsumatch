@@ -236,6 +236,7 @@ runs:
             "android.nonTransitiveRClass=true\n"
             "android.nonFinalResIds=true\n"
             "org.gradle.caching=true\n"
+            "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m\n"
           )
           file.write(data)
     - name: Get NDK version from love-android
