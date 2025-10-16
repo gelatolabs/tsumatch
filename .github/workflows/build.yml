@@ -141,7 +141,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tsumatch-macos-app
-          path: dist/*.app
+          path: dist/*.zip
 
   build-linux:
     needs: [get-info, build-love-package]
