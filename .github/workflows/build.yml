@@ -193,7 +193,7 @@ jobs:
 
       - name: Build Android packages
         id: build-android
-        uses: love-actions/love-actions-android@v2
+        uses: ImpleLee/love-actions-android@patch-1
         with:
           app-name: ${{ env.APP_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
@@ -201,6 +201,7 @@ jobs:
           icon-specifier: "@mipmap/icon"
           love-package: ./tsumatch.love
           love-ref: main
+          needs-microphone: false
           version-string: ${{ needs.get-info.outputs.version-string }}
           version-code: ${{ needs.get-info.outputs.version-code }}
           output-folder: ./dist
