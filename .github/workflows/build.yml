@@ -227,7 +227,7 @@ jobs:
         env:
           KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
         run: |
-          cp ./love-actions-android/love-android/app/build/outputs/bundle/embedNoRecordRelease/app-embed-no-record-release.aab ./dist/tsumatch-release.aab
+          cp ./love-actions-android/love-android/app/build/outputs/bundle/embedNoRecordRelease/app-embed-noRecord-release.aab ./dist/tsumatch-release.aab
 
       - name: Upload Android APK artifact
         uses: actions/upload-artifact@v4
