@@ -252,7 +252,7 @@ runs:
     - name: Build package (Debug)
       uses: burrunan/gradle-cache-action@v2
       with:
-        arguments: ${{ inputs.needs-microphone == 'true' && 'assembleEmbedRecordDebug' || 'assembleEmbedNoRecordDebug' }}
+        arguments: ${{ inputs.needs-microphone == 'true' && 'assembleEmbedRecordDebug' || 'assembleEmbedNoRecordDebug' }} --stacktrace
         build-root-directory: ${{ inputs.love-actions-folder }}/love-android
         concurrent: true
         gradle-build-scan-report: false
