@@ -153,7 +153,7 @@ jobs:
       - name: Build Linux packages
         uses: love-actions/love-actions-linux@v1
         with:
-          app-name: Tsumatch
+          app-name: tsumatch
           bundle-id: ${{ env.BUNDLE_ID }}
           description: ${{ env.DESCRIPTION }}
           love-package: ./tsumatch.love
@@ -226,7 +226,7 @@ jobs:
           bundle-id: ${{ env.BUNDLE_ID }}
           copyright: ${{ needs.get-info.outputs.copyright }}
           love-package: ./tsumatch.love
-          icon-path: ./icons/icon.icns
+          icon-path: ./icons/ios.iconset
           version-string: ${{ needs.get-info.outputs.version-string }}
           output-folder: ./dist
           # apple-development-base64: ${{ secrets.IOS_CERT_APPLE_DEVELOPMENT_BASE64 }}

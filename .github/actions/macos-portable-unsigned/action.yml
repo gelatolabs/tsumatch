@@ -207,7 +207,7 @@ runs:
         const lovePbxprojPath = './love-actions-macos-portable/love/platform/xcode/love.xcodeproj/project.pbxproj';
         const loveProject = xcode.project(lovePbxprojPath).parseSync();
         const loveTarget = 'love-macosx'
-        loveProject.updateBuildProperty('CODE_SIGN_IDENTITY', '""', configuration, loveTarget);
+        loveProject.updateBuildProperty('CODE_SIGN_IDENTITY', '"-"', configuration, loveTarget);
         loveProject.updateBuildProperty('CODE_SIGN_STYLE', '"Automatic"', configuration, loveTarget);
         loveProject.updateBuildProperty('MACOSX_DEPLOYMENT_TARGET', '10.9', configuration, loveTarget);
         loveProject.updateBuildProperty('MARKETING_VERSION', '${{ inputs.version-string }}', configuration, loveTarget);
@@ -297,7 +297,7 @@ runs:
         -project ./love-actions-macos-portable/love/platform/xcode/love.xcodeproj \
         -scheme love-macosx \
         -configuration Release \
-        CODE_SIGN_IDENTITY="" \
+        CODE_SIGN_IDENTITY="-" \
         OTHER_CFLAGS="-Wno-unused-parameter -Wno-sign-compare -Wno-conditional-uninitialized -Wno-strict-prototypes"
 
         cp -R ./love-actions-macos-portable/love/platform/xcode/build/Release/${{ inputs.product-name }}.app ./love-actions-macos-portable/
