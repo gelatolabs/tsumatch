@@ -83,7 +83,7 @@ inputs:
       Should be .png format
       Would be used to create .dmg
     required: false
-    default: "./background.png"
+    default: ""
   dmg-icon-position:
     description: |
       DMG icon position
@@ -307,21 +307,25 @@ runs:
       shell: bash
       run: |
         brew install create-dmg
-        BACKGROUND_ARG=""
+
+        ARGS=(
+          --app-drop-link ${{ inputs.dmg-link-position }}
+          --hide-extension "${{ inputs.product-name }}.app"
+          --icon "${{ inputs.product-name }}.app" ${{ inputs.dmg-icon-position }}
+          --icon-size ${{ inputs.dmg-icon-size }}
+          --text-size ${{ inputs.dmg-text-size }}
+          --volicon "${{ inputs.dmg-volume-icon-path }}"
+          --volname "${{ inputs.dmg-volume-name }}"
+          --window-pos ${{ inputs.dmg-window-position }}
+          --window-size ${{ inputs.dmg-window-size }}
+        )
+
         if [ -n "${{ inputs.dmg-background-path }}" ]; then
-          BACKGROUND_ARG='--background "${{ inputs.dmg-background-path }}"'
+          ARGS+=(--background "${{ inputs.dmg-background-path }}")
         fi
+
         create-dmg \
-        --app-drop-link ${{ inputs.dmg-link-position }} \
-        $BACKGROUND_ARG \
-        --hide-extension "${{ inputs.product-name }}.app" \
-        --icon "${{ inputs.product-name }}.app" ${{ inputs.dmg-icon-position }} \
-        --icon-size ${{ inputs.dmg-icon-size }} \
-        --text-size ${{ inputs.dmg-text-size }} \
-        --volicon "${{ inputs.dmg-volume-icon-path }}" \
-        --volname "${{ inputs.dmg-volume-name }}" \
-        --window-pos ${{ inputs.dmg-window-position }} \
-        --window-size ${{ inputs.dmg-window-size }} \
+        "${ARGS[@]}" \
         "${{ inputs.output-folder }}/${{ inputs.product-name }}.dmg" \
         "./love-actions-macos-portable/${{ inputs.product-name }}.app"
     - name: Gather packages in output folder
