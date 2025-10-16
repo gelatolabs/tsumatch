@@ -204,6 +204,7 @@ runs:
         const infoPath = './love-actions-ios/love/platform/xcode/ios/love-ios.plist';
         const infoPlist = plist['parse'](fs.readFileSync(infoPath, 'utf8'));
         infoPlist['CFBundleName'] = '${{ inputs.app-name }}';
+        infoPlist['CFBundleDisplayName'] = '${{ inputs.app-name }}';
         infoPlist['CFBundleShortVersionString'] = '${{ inputs.version-string }}';
         infoPlist['CFBundleVersion'] = '${{ steps.setup-env.outputs.bundle-version }}';
         infoPlist['ITSAppUsesNonExemptEncryption'] = false;

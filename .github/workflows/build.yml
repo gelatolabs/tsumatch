@@ -121,7 +121,7 @@ jobs:
           icon-path: ./icons/icon.icns
           version-string: ${{ needs.get-info.outputs.version-string }}
           output-folder: ./dist
-          product-name: ${{ env.APP_NAME }}
+          product-name: tsumatch
           dmg-volume-icon-path: ./icons/icon.icns
           dmg-volume-name: "${{ env.APP_NAME }}"
           dmg-icon-position: "100 98"
@@ -263,7 +263,7 @@ jobs:
           bundle-id: ${{ env.BUNDLE_ID }}
           copyright: ${{ needs.get-info.outputs.copyright }}
           love-package: ./tsumatch.love
-          product-name: ${{ env.APP_NAME }}
+          product-name: tsumatch
           icon-path: ./icons/ios.iconset
           version-string: ${{ needs.get-info.outputs.version-string }}
           output-folder: ./dist

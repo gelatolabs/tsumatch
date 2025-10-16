@@ -272,6 +272,7 @@ runs:
         const parsed = plist['parse'](fs.readFileSync(plistPath, 'utf8'));
         parsed['CFBundleExecutable'] = '${{ inputs.product-name }}';
         parsed['CFBundleName'] = '${{ inputs.app-name }}';
+        parsed['CFBundleDisplayName'] = '${{ inputs.app-name }}';
         parsed['NSHumanReadableCopyright'] = '${{ inputs.copyright }}';
         delete parsed['CFBundleDocumentTypes'];
         delete parsed['UTExportedTypeDeclarations'];
