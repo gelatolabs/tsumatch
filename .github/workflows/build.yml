@@ -96,7 +96,7 @@ jobs:
       - name: Upload Windows installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tsumatch-windows-x86-installer
+          name: tsumatch-windows-installer
           path: dist/*_installer.exe
 
   build-macos:
