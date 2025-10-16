@@ -193,7 +193,7 @@ jobs:
 
       - name: Build Android packages
         id: build-android
-        uses: ImpleLee/love-actions-android@patch-1
+        uses: ./.github/actions/android
         with:
           app-name: ${{ env.APP_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
