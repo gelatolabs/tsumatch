@@ -359,7 +359,8 @@ function checkSanshokuDoukou(melds)
             for k = j + 1, #triplets do
                 if triplets[i][2] ~= triplets[j][2] and
                    triplets[j][2] ~= triplets[k][2] and
-                   triplets[i][2] ~= triplets[k][2] then
+                   triplets[i][2] ~= triplets[k][2] and
+                   triplets[i][2] ~= "z" and triplets[j][2] ~= "z" and triplets[k][2] ~= "z" then
                     local n1 = triplets[i][1] == 0 and 5 or triplets[i][1]
                     local n2 = triplets[j][1] == 0 and 5 or triplets[j][1]
                     local n3 = triplets[k][1] == 0 and 5 or triplets[k][1]
