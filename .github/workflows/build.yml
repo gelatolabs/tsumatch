@@ -124,12 +124,12 @@ jobs:
           product-name: ${{ env.APP_NAME }}
           dmg-volume-icon-path: ./icons/icon.icns
           dmg-volume-name: "${{ env.APP_NAME }}"
-          dmg-icon-position: "287 313"
+          dmg-icon-position: "100 98"
           dmg-icon-size: "128"
-          dmg-link-position: "734 313"
+          dmg-link-position: "307 98"
           dmg-text-size: "12"
           dmg-window-position: "200 120"
-          dmg-window-size: "1024 604"
+          dmg-window-size: "414 321"
 
       - name: Upload macOS DMG artifact
         uses: actions/upload-artifact@v4
