@@ -1,0 +1,331 @@
+name: Love actions for macOS portable (unsigned)
+description: macOS portable CI/CD for LÖVE based games (unsigned)
+branding:
+  icon: "heart"
+  color: "purple"
+inputs:
+  app-name:
+    description: |
+      App display name
+      Would be used in platform/xcode/macosx/love-macosx.plist
+    required: false
+    default: "LÖVE for macOS"
+  bundle-id:
+    description: |
+      App bundle id
+      Would be used in platform/xcode/love.xcodeproj/project.pbxproj
+    required: false
+    default: "org.love2d.macOS"
+  copyright:
+    description: |
+      App copyright info
+      Would be used in platform/xcode/macosx/love-macosx.plist
+    required: false
+  icon-path:
+    description: |
+      Icon path
+      Should be .icns format
+      Would be used in platform/xcode/Images.xcassets/OS X AppIcon.appiconset
+    required: true
+    default: "./icon.icns"
+  love-ref:
+    description: |
+      LÖVE git ref
+      Could be commit hash, tags or branch name
+    required: false
+    default: "fc3f5ee6209a0aab9a4d381ed5cd99110f9ff2f2"
+  love-patch:
+    description: |
+      Git patch file path for the LÖVE repo
+      The patch must start from `love-ref`
+      You can use `git diff` to get the patch file
+    required: false
+  love-package:
+    description: |
+      Love package
+      Would be used to assemble the executable
+    required: false
+    default: "./game.love"
+  libs-path:
+    description: |
+      Path to the libs folder
+      Would copy all contents to platform/xcode/
+      Top folder not included
+    required: false
+  extra-assets:
+    description: |
+      List of file paths to be added to `Copy Bundle Resources` build phase
+      Don't need global quotes, separated by spaces
+      Looks like: ./assets/ ./logics/ ./main.lua ./config.lua
+    required: false
+  product-name:
+    description: |
+      Base name of the package
+      Would be used to rename products
+    required: false
+    default: "love_app"
+  version-string:
+    description: |
+      App version string
+      Use 3 numbers seperated by dots
+      Looks like 3.2.1
+    required: false
+    default: "11.4"
+  output-folder:
+    description: |
+      Packages output folder
+      All packages would be placed here
+    required: false
+    default: "./build"
+  dmg-background-path:
+    description: |
+      DMG background path
+      Should be .png format
+      Would be used to create .dmg
+    required: false
+    default: "./background.png"
+  dmg-icon-position:
+    description: |
+      DMG icon position
+      Would be used to create .dmg
+    required: false
+    default: "top-left"
+  dmg-icon-size:
+    description: |
+      DMG icon size
+      Would be used to create .dmg
+    required: false
+    default: "128"
+  dmg-link-position:
+    description: |
+      DMG drop link position
+      Would be used to create .dmg
+    required: false
+    default: "bottom-left"
+  dmg-text-size:
+    description: |
+      DMG text size
+      Would be used to create .dmg
+    required: false
+    default: "12"
+  dmg-volume-icon-path:
+    description: |
+      DMG volume icon path
+      Should be .icns format
+      Would be used to create .dmg
+    required: false
+    default: "./icon.icns"
+  dmg-volume-name:
+    description: |
+      DMG volume name
+      Would be used to create .dmg
+    required: false
+    default: "LÖVE for macOS"
+  dmg-window-position:
+    description: |
+      DMG window position
+      Would be used to create .dmg
+    required: false
+    default: "top-left"
+  dmg-window-size:
+    description: |
+      DMG window size
+      Would be used to create .dmg
+    required: false
+    default: "512"
+outputs:
+  package-paths:
+    description: |
+      Paths to the built packages in a bash list
+      Would be paths relative to repository root, separated by spaces
+      Looks like: ./build/game.apk ./build/game.abb
+    value: ${{ steps.gather-packages.outputs.package-paths }}
+runs:
+  using: "composite"
+  steps:
+    - name: Create directories
+      shell: bash
+      run: |
+        mkdir -p ./love-actions-macos-portable/
+        mkdir -p ${{ inputs.output-folder }}
+    - name: Checkout love
+      uses: actions/checkout@v3
+      with:
+        path: ./love-actions-macos-portable/love
+        ref: ${{ inputs.love-ref }}
+        repository: love2d/love
+    - name: Apply love patch
+      if: "${{ inputs.love-patch != '' }}"
+      shell: bash
+      run: |
+        cp ${{ inputs.love-patch }} ./love-actions-macos-portable/love/love.patch
+        cd ./love-actions-macos-portable/love
+        git apply ./love.patch
+    - name: Checkout framework SDK
+      uses: actions/checkout@v3
+      with:
+        path: ./love-actions-macos-portable/love-apple-dependencies
+        ref: 402eed62c2bd654a860bb64544393285fb640497
+        repository: love2d/love-apple-dependencies
+    - name: Move framework SDK and love package
+      shell: bash
+      run: |
+        mv ./love-actions-macos-portable/love-apple-dependencies/macOS/Frameworks/ ./love-actions-macos-portable/love/platform/xcode/macosx
+        mv ${{ inputs.love-package }} ./love-actions-macos-portable/love/platform/xcode/game.love
+        mkdir -p ./love-actions-macos-portable/love/platform/xcode/build/Debug
+        mkdir -p ./love-actions-macos-portable/love/platform/xcode/build/Release
+    - name: Copy extra assets
+      if: "${{ inputs.extra-assets != '' }}"
+      shell: bash
+      run: |
+        cp -r -f ${{ inputs.extra-assets }} ./love-actions-macos-portable/love/platform/xcode/
+    - name: Process icons
+      shell: bash
+      run: |
+        rm -rf ./love-actions-macos-portable/love/platform/xcode/Images.xcassets/OS\ X\ AppIcon.appiconset/*.png
+        iconutil -c iconset -o ./love-actions-macos-portable/icon.iconset ${{ inputs.icon-path }}
+        mv -f ./love-actions-macos-portable/icon.iconset/* ./love-actions-macos-portable/love/platform/xcode/Images.xcassets/OS\ X\ AppIcon.appiconset/
+    - name: Modify XCode project
+      shell: bash
+      run: |
+        npm i plist xcode
+
+        cat <<EOT >> temp.js
+        const fs = require('fs');
+        const path = require('path');
+        const plist = require('plist');
+        const xcode = require('xcode');
+
+        const configuration = null;
+
+        const liblovePbxprojPath = './love-actions-macos-portable/love/platform/xcode/liblove.xcodeproj/project.pbxproj';
+        const libloveProject = xcode.project(liblovePbxprojPath).parseSync();
+        const libloveTarget = 'liblove-macosx'
+        libloveProject.updateBuildProperty('MACOSX_DEPLOYMENT_TARGET', '10.9', configuration, libloveTarget);
+        fs.writeFileSync(liblovePbxprojPath, libloveProject.writeSync());
+
+        const lovePbxprojPath = './love-actions-macos-portable/love/platform/xcode/love.xcodeproj/project.pbxproj';
+        const loveProject = xcode.project(lovePbxprojPath).parseSync();
+        const loveTarget = 'love-macosx'
+        loveProject.updateBuildProperty('CODE_SIGN_IDENTITY', '""', configuration, loveTarget);
+        loveProject.updateBuildProperty('CODE_SIGN_STYLE', '"Automatic"', configuration, loveTarget);
+        loveProject.updateBuildProperty('MACOSX_DEPLOYMENT_TARGET', '10.9', configuration, loveTarget);
+        loveProject.updateBuildProperty('MARKETING_VERSION', '${{ inputs.version-string }}', configuration, loveTarget);
+        loveProject.updateBuildProperty('PRODUCT_BUNDLE_IDENTIFIER', '${{ inputs.bundle-id }}', configuration, loveTarget);
+        loveProject.updateBuildProperty('PRODUCT_NAME', '${{ inputs.product-name }}', configuration, loveTarget);
+        loveProject.addResourceFile(
+            './game.love',
+            {target: loveProject.findTargetKey('"love-macosx"')},
+            loveProject.findPBXGroupKey({name: 'Resources'})
+        );
+        const extraAssets = '${{ inputs.extra-assets }}';
+        if (extraAssets !== '') {
+            extraAssets.split(' ').forEach(filename => {
+                loveProject.addResourceFile(
+                    filename,
+                    {target: loveProject.findTargetKey('"' + loveTarget + '"')},
+                    loveProject.findPBXGroupKey({name: 'Resources'})
+                );
+            });
+        }
+        const libFolder = '${{ inputs.libs-path }}';
+        if (libFolder !== '') {
+            fs.readdirSync(libFolder).forEach(filename => {
+                fs.copyFileSync(
+                    path.join(libFolder, filename),
+                    path.join('./love-actions-macos-portable/love/platform/xcode', filename)
+                );
+                if (path.extname(filename) === '.a') {
+                    loveProject.addStaticLibrary(
+                        filename,
+                        {target: loveProject.findTargetKey('"' + loveTarget + '"')}
+                    );
+                    loveProject.removeFromLibrarySearchPaths({path: filename})
+                } else if (path.extname(filename) === '.dylib') {
+                    const dylibFile = loveProject.addFile(
+                        filename,
+                        loveProject.findPBXGroupKey({name: 'love'}),
+                        {
+                            customFramework: true,
+                            target: loveProject.findTargetKey('"' + loveTarget + '"')
+                        }
+                    );
+                    dylibFile.group = 'Copy Frameworks';
+                    dylibFile.path = './' + filename;
+                    dylibFile.uuid = loveProject.generateUuid();
+                    loveProject.addToPbxBuildFileSection(dylibFile);
+                    loveProject.buildPhaseObject(
+                        'PBXCopyFilesBuildPhase',
+                        'Copy Frameworks',
+                        loveProject.findTargetKey('"' + loveTarget + '"')
+                    ).files.push({
+                        value: dylibFile.uuid,
+                        comment: dylibFile.basename + ' in ' + dylibFile.group
+                    });
+                }
+            });
+            loveProject.addToLibrarySearchPaths('"$' + '(PROJECT_DIR)"');
+        }
+        fs.writeFileSync(lovePbxprojPath, loveProject.writeSync());
+
+        const plistPath = './love-actions-macos-portable/love/platform/xcode/macosx/love-macosx.plist';
+        const parsed = plist['parse'](fs.readFileSync(plistPath, 'utf8'));
+        parsed['CFBundleExecutable'] = '${{ inputs.product-name }}';
+        parsed['CFBundleName'] = '${{ inputs.app-name }}';
+        parsed['NSHumanReadableCopyright'] = '${{ inputs.copyright }}';
+        delete parsed['CFBundleDocumentTypes'];
+        delete parsed['UTExportedTypeDeclarations'];
+        fs.writeFileSync(plistPath, plist['build'](parsed));
+
+        const iconPath = './love-actions-macos-portable/love/platform/xcode/Images.xcassets/OS X AppIcon.appiconset/Contents.json';
+        const iconContents = JSON.parse(fs.readFileSync(iconPath, 'utf8'));
+        iconContents.images.forEach(image => {
+            image.filename = 'icon_' + image.size + (image.scale === '2x' ? '@2x' : '') + '.png';
+        });
+        fs.writeFileSync(iconPath, JSON.stringify(iconContents));
+
+        console.info('Project info updated.');
+        EOT
+
+        node temp.js
+    - name: Build MacOS app
+      env:
+        ARCHIVE_PATH: ./love-actions-macos-portable/archive.xcarchive
+      shell: bash
+      run: |
+        xcodebuild clean build -quiet \
+        -project ./love-actions-macos-portable/love/platform/xcode/love.xcodeproj \
+        -scheme love-macosx \
+        -configuration Release \
+        CODE_SIGN_IDENTITY="" \
+        OTHER_CFLAGS="-Wno-unused-parameter -Wno-sign-compare -Wno-conditional-uninitialized -Wno-strict-prototypes"
+
+        cp -R ./love-actions-macos-portable/love/platform/xcode/build/Release/${{ inputs.product-name }}.app ./love-actions-macos-portable/
+    - name: Create dmg file
+      if: "${{ inputs.dmg-background-path != '' && inputs.dmg-icon-position != '' && inputs.dmg-icon-size != '' && inputs.dmg-link-position != '' && inputs.dmg-text-size != '' && inputs.dmg-volume-icon-path != '' && inputs.dmg-volume-name != '' && inputs.dmg-window-position != '' && inputs.dmg-window-size != '' }}"
+      shell: bash
+      run: |
+        brew install create-dmg
+        create-dmg \
+        --app-drop-link ${{ inputs.dmg-link-position }} \
+        --background "${{ inputs.dmg-background-path }}" \
+        --hide-extension "${{ inputs.product-name }}.app" \
+        --icon "${{ inputs.product-name }}.app" ${{ inputs.dmg-icon-position }} \
+        --icon-size ${{ inputs.dmg-icon-size }} \
+        --text-size ${{ inputs.dmg-text-size }} \
+        --volicon "${{ inputs.dmg-volume-icon-path }}" \
+        --volname "${{ inputs.dmg-volume-name }}" \
+        --window-pos ${{ inputs.dmg-window-position }} \
+        --window-size ${{ inputs.dmg-window-size }} \
+        "${{ inputs.output-folder }}/${{ inputs.product-name }}.dmg" \
+        "./love-actions-macos-portable/${{ inputs.product-name }}.app"
+    - name: Gather packages in output folder
+      id: gather-packages
+      shell: bash
+      run: |
+        ditto -c -k --sequesterRsrc --keepParent ./love-actions-macos-portable/${{ inputs.product-name }}.app ${{ inputs.output-folder }}/${{ inputs.product-name }}.zip
+        echo "package-paths=$(ls -d ${{ inputs.output-folder }}/* | tr '\r\n' ' ')" >> $GITHUB_OUTPUT
+    - name: Cleanup
+      shell: bash
+      run: |
+        rm -rf ./love-actions-macos-portable/

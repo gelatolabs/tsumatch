@@ -47,7 +47,7 @@ jobs:
       - name: Build .love package
         uses: love-actions/love-actions-core@v1
         with:
-          build-list: ./src/
+          build-list: ./src/*
           package-path: ./tsumatch.love
 
       - name: Upload .love package
@@ -74,7 +74,6 @@ jobs:
           love-package: ./tsumatch.love
           icon-path: ./icons/icon.ico
           product-name: tsumatch
-          version-string: ${{ needs.get-info.outputs.version-string }}
           app-id: ${{ env.BUNDLE_ID }}
           project-website: ${{ env.PROJECT_WEBSITE }}
           output-folder: ./dist
@@ -116,7 +115,7 @@ jobs:
           name: tsumatch-love
 
       - name: Build macOS packages
-        uses: love-actions/love-actions-macos-portable@v1
+        uses: ./.github/actions/macos-portable-unsigned
         with:
           app-name: ${{ env.APP_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
@@ -125,10 +124,7 @@ jobs:
           icon-path: ./icons/icon.icns
           version-string: ${{ needs.get-info.outputs.version-string }}
           output-folder: ./dist
-          # account-username: ${{ secrets.APPLE_ID }}
-          # account-password: ${{ secrets.APPLE_APP_PASSWORD }}
-          # developer-id-application-base64: ${{ secrets.MACOS_CERT_BASE64 }}
-          # team-id: ${{ secrets.APPLE_TEAM_ID }}
+          product-name: tsumatch
 
       - name: Upload macOS DMG artifact
         uses: actions/upload-artifact@v4
@@ -157,7 +153,7 @@ jobs:
       - name: Build Linux packages
         uses: love-actions/love-actions-linux@v1
         with:
-          app-name: ${{ env.APP_NAME }}
+          app-name: Tsumatch
           bundle-id: ${{ env.BUNDLE_ID }}
           description: ${{ env.DESCRIPTION }}
           love-package: ./tsumatch.love
@@ -230,7 +226,7 @@ jobs:
           bundle-id: ${{ env.BUNDLE_ID }}
           copyright: ${{ needs.get-info.outputs.copyright }}
           love-package: ./tsumatch.love
-          icon-path: ./icons/icon.png
+          icon-path: ./icons/icon.icns
           version-string: ${{ needs.get-info.outputs.version-string }}
           output-folder: ./dist
           # apple-development-base64: ${{ secrets.IOS_CERT_APPLE_DEVELOPMENT_BASE64 }}
