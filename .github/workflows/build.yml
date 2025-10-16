@@ -215,7 +215,9 @@ jobs:
           keystore-store-password: ${{ secrets.ANDROID_KEYSTORE_STORE_PASSWORD }}
 
       - name: Build Android App Bundle
-        if: "${{ secrets.ANDROID_KEYSTORE_ALIAS != '' }}"
+        if: "${{ env.KEYSTORE_ALIAS != '' }}"
+        env:
+          KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
         uses: burrunan/gradle-cache-action@v2
         with:
           arguments: bundleEmbedRecordRelease
@@ -225,7 +227,9 @@ jobs:
           gradle-distribution-sha-256-sum-warning: false
 
       - name: Copy AAB to output folder
-        if: "${{ secrets.ANDROID_KEYSTORE_ALIAS != '' }}"
+        if: "${{ env.KEYSTORE_ALIAS != '' }}"
+        env:
+          KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
         run: |
           cp ./love-actions-android/love-android/app/build/outputs/bundle/embedRecordRelease/app-embed-record-release.aab ./dist/tsumatch-release.aab
 
@@ -236,7 +240,9 @@ jobs:
           path: dist/*.apk
 
       - name: Upload Android AAB artifact
-        if: "${{ secrets.ANDROID_KEYSTORE_ALIAS != '' }}"
+        if: "${{ env.KEYSTORE_ALIAS != '' }}"
+        env:
+          KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
         uses: actions/upload-artifact@v4
         with:
           name: tsumatch-android-aab
