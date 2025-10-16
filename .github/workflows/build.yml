@@ -1,0 +1,290 @@
+name: Build Tsumatch!
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  APP_NAME: "Tsumatch!"
+  BUNDLE_ID: xyz.gelatolabs.tsumatch
+  LOVE_VERSION: "11.5"
+  PROJECT_WEBSITE: "https://gelatolabs.xyz"
+  DESCRIPTION: "Match-3 riichi mahjong game"
+
+jobs:
+  get-info:
+    runs-on: ubuntu-latest
+    outputs:
+      version-string: ${{ steps.get-version.outputs.version-string }}
+      version-code: ${{ steps.get-version.outputs.version-code }}
+      copyright: ${{ steps.read-copyright.outputs.copyright }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from git
+        id: get-version
+        run: |
+          # Get version from tag
+          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          # Get version code from commit count
+          VERSION_CODE=$(git rev-list --count HEAD)
+          echo "version-string=$VERSION" >> $GITHUB_OUTPUT
+          echo "version-code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION ($VERSION_CODE)"
+
+      - name: Read copyright from LICENSE
+        id: read-copyright
+        run: echo "copyright=$(head -n 1 LICENSE)" >> $GITHUB_OUTPUT
+
+  build-love-package:
+    needs: get-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build .love package
+        uses: love-actions/love-actions-core@v1
+        with:
+          build-list: ./src/
+          package-path: ./tsumatch.love
+
+      - name: Upload .love package
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-love
+          path: tsumatch.love
+
+  build-windows:
+    needs: [get-info, build-love-package]
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love package
+        uses: actions/download-artifact@v4
+        with:
+          name: tsumatch-love
+
+      - name: Build Windows packages
+        uses: love-actions/love-actions-windows@v1
+        with:
+          love-package: ./tsumatch.love
+          icon-path: ./icons/icon.ico
+          product-name: tsumatch
+          version-string: ${{ needs.get-info.outputs.version-string }}
+          app-id: ${{ env.BUNDLE_ID }}
+          project-website: ${{ env.PROJECT_WEBSITE }}
+          output-folder: ./dist
+
+      - name: Upload Windows x86 ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-windows-x86-zip
+          path: dist/*-x86.zip
+
+      - name: Upload Windows x64 ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-windows-x64-zip
+          path: dist/*-x64.zip
+
+      - name: Upload Windows x86 installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-windows-x86-installer
+          path: dist/*-x86.exe
+
+      - name: Upload Windows x64 installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-windows-x64-installer
+          path: dist/*-x64.exe
+
+  build-macos:
+    needs: [get-info, build-love-package]
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love package
+        uses: actions/download-artifact@v4
+        with:
+          name: tsumatch-love
+
+      - name: Build macOS packages
+        uses: love-actions/love-actions-macos-portable@v1
+        with:
+          app-name: ${{ env.APP_NAME }}
+          bundle-id: ${{ env.BUNDLE_ID }}
+          copyright: ${{ needs.get-info.outputs.copyright }}
+          love-package: ./tsumatch.love
+          icon-path: ./icons/icon.icns
+          version-string: ${{ needs.get-info.outputs.version-string }}
+          output-folder: ./dist
+          # account-username: ${{ secrets.APPLE_ID }}
+          # account-password: ${{ secrets.APPLE_APP_PASSWORD }}
+          # developer-id-application-base64: ${{ secrets.MACOS_CERT_BASE64 }}
+          # team-id: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Upload macOS DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-macos-dmg
+          path: dist/*.dmg
+
+      - name: Upload macOS .app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-macos-app
+          path: dist/*.app
+
+  build-linux:
+    needs: [get-info, build-love-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love package
+        uses: actions/download-artifact@v4
+        with:
+          name: tsumatch-love
+
+      - name: Build Linux packages
+        uses: love-actions/love-actions-linux@v1
+        with:
+          app-name: ${{ env.APP_NAME }}
+          bundle-id: ${{ env.BUNDLE_ID }}
+          description: ${{ env.DESCRIPTION }}
+          love-package: ./tsumatch.love
+          icon-path: ./icons/icon.png
+          version-string: ${{ needs.get-info.outputs.version-string }}
+          output-folder: ./dist
+
+      - name: Upload Linux AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-linux-appimage
+          path: dist/*.AppImage
+
+      - name: Upload Linux Debian package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-linux-deb
+          path: dist/*.deb
+
+  build-android:
+    needs: [get-info, build-love-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love package
+        uses: actions/download-artifact@v4
+        with:
+          name: tsumatch-love
+
+      - name: Build Android packages
+        uses: love-actions/love-actions-android@v2
+        with:
+          app-name: ${{ env.APP_NAME }}
+          bundle-id: ${{ env.BUNDLE_ID }}
+          resource-path: ./icons/android
+          icon-specifier: "@mipmap/icon"
+          love-package: ./tsumatch.love
+          version-string: ${{ needs.get-info.outputs.version-string }}
+          version-code: ${{ needs.get-info.outputs.version-code }}
+          output-folder: ./dist
+          keystore-alias: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          keystore-key-password: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
+          keystore-store-password: ${{ secrets.ANDROID_KEYSTORE_STORE_PASSWORD }}
+
+      - name: Upload Android APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-android
+          path: dist/*.apk
+
+  build-ios:
+    needs: [get-info, build-love-package]
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love package
+        uses: actions/download-artifact@v4
+        with:
+          name: tsumatch-love
+
+      - name: Build iOS package
+        uses: love-actions/love-actions-ios@v1
+        with:
+          app-name: ${{ env.APP_NAME }}
+          bundle-id: ${{ env.BUNDLE_ID }}
+          copyright: ${{ needs.get-info.outputs.copyright }}
+          love-package: ./tsumatch.love
+          icon-path: ./icons/icon.png
+          version-string: ${{ needs.get-info.outputs.version-string }}
+          output-folder: ./dist
+          # apple-development-base64: ${{ secrets.IOS_CERT_APPLE_DEVELOPMENT_BASE64 }}
+          # apple-development-password: ${{ secrets.IOS_CERT_APPLE_DEVELOPMENT_PASSWORD }}
+          # api-key: ${{ secrets.APPLE_API_KEY }}
+          # api-key-id: ${{ secrets.APPLE_API_KEY_ID }}
+          # api-issuer-id: ${{ secrets.APPLE_API_ISSUER_ID }}
+          # mobile-provision-base64: ${{ secrets.IOS_MOBILE_PROVISION_BASE64 }}
+          # team-id: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-ios
+          path: dist/*.ipa
+
+  build-web:
+    needs: [get-info, build-love-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download .love package
+        uses: actions/download-artifact@v4
+        with:
+          name: tsumatch-love
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install love.js
+        run: npm install -g love.js
+
+      - name: Build web version
+        run: |
+          love.js -t 'Tsumatch!' -c src dist/web
+          rm -rf dist/web/theme
+          cp -r web dist/
+
+      - name: Create web archive
+        run: |
+          cd dist/web
+          zip -r ../../tsumatch-web.zip .
+
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-web
+          path: tsumatch-web.zip
