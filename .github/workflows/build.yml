@@ -206,6 +206,7 @@ jobs:
           resource-path: ./icons/android
           icon-specifier: "@mipmap/icon"
           love-package: ./tsumatch.love
+          love-ref: main
           version-string: ${{ needs.get-info.outputs.version-string }}
           version-code: ${{ needs.get-info.outputs.version-code }}
           output-folder: ./dist
