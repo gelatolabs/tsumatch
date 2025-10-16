@@ -85,25 +85,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tsumatch-windows-x86-zip
-          path: dist/*-x86.zip
+          path: dist/*_x86.zip
 
       - name: Upload Windows x64 ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: tsumatch-windows-x64-zip
-          path: dist/*-x64.zip
+          path: dist/*_x64.zip
 
-      - name: Upload Windows x86 installer artifact
+      - name: Upload Windows installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: tsumatch-windows-x86-installer
-          path: dist/*-x86.exe
-
-      - name: Upload Windows x64 installer artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tsumatch-windows-x64-installer
-          path: dist/*-x64.exe
+          path: dist/*_installer.exe
 
   build-macos:
     needs: [get-info, build-love-package]
