@@ -198,6 +198,7 @@ jobs:
           name: tsumatch-love
 
       - name: Build Android packages
+        id: build-android
         uses: love-actions/love-actions-android@v2
         with:
           app-name: ${{ env.APP_NAME }}
@@ -213,11 +214,33 @@ jobs:
           keystore-key-password: ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}
           keystore-store-password: ${{ secrets.ANDROID_KEYSTORE_STORE_PASSWORD }}
 
+      - name: Build Android App Bundle
+        if: "${{ secrets.ANDROID_KEYSTORE_ALIAS != '' }}"
+        uses: burrunan/gradle-cache-action@v2
+        with:
+          arguments: bundleEmbedRecordRelease
+          build-root-directory: ./love-actions-android/love-android
+          concurrent: true
+          gradle-build-scan-report: false
+          gradle-distribution-sha-256-sum-warning: false
+
+      - name: Copy AAB to output folder
+        if: "${{ secrets.ANDROID_KEYSTORE_ALIAS != '' }}"
+        run: |
+          cp ./love-actions-android/love-android/app/build/outputs/bundle/embedRecordRelease/app-embed-record-release.aab ./dist/tsumatch-release.aab
+
       - name: Upload Android APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tsumatch-android
+          name: tsumatch-android-apk
           path: dist/*.apk
+
+      - name: Upload Android AAB artifact
+        if: "${{ secrets.ANDROID_KEYSTORE_ALIAS != '' }}"
+        uses: actions/upload-artifact@v4
+        with:
+          name: tsumatch-android-aab
+          path: dist/*.aab
 
   build-ios:
     needs: [get-info, build-love-package]
