@@ -233,14 +233,14 @@ runs:
         -project ./love-actions-ios/love/platform/xcode/love.xcodeproj \
         -scheme love-ios \
         -configuration Release \
-        -destination 'generic/platform=iOS' \
+        -destination 'generic/platform=iOS Simulator' \
         -derivedDataPath ./love-actions-ios/love/platform/xcode/build \
         CODE_SIGN_IDENTITY="-" \
         OTHER_CFLAGS="-Wno-everything"
 
-        cp -R ./love-actions-ios/love/platform/xcode/build/Build/Products/Release-iphoneos/${{ inputs.product-name }}.app ${{ inputs.output-folder }}/
+        cp -R ./love-actions-ios/love/platform/xcode/build/Build/Products/Release-iphonesimulator/${{ inputs.product-name }}.app ${{ inputs.output-folder }}/
         mkdir -p ./love-actions-ios/Payload
-        cp -R ./love-actions-ios/love/platform/xcode/build/Build/Products/Release-iphoneos/${{ inputs.product-name }}.app ./love-actions-ios/Payload/
+        cp -R ./love-actions-ios/love/platform/xcode/build/Build/Products/Release-iphonesimulator/${{ inputs.product-name }}.app ./love-actions-ios/Payload/
         cd ./love-actions-ios
         zip -r ../${{ inputs.output-folder }}/${{ inputs.product-name }}.ipa Payload
         cd ..

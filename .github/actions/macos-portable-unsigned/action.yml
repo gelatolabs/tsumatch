@@ -303,13 +303,17 @@ runs:
 
         cp -R ./love-actions-macos-portable/love/platform/xcode/build/Build/Products/Release/${{ inputs.product-name }}.app ./love-actions-macos-portable/
     - name: Create dmg file
-      if: "${{ inputs.dmg-background-path != '' && inputs.dmg-icon-position != '' && inputs.dmg-icon-size != '' && inputs.dmg-link-position != '' && inputs.dmg-text-size != '' && inputs.dmg-volume-icon-path != '' && inputs.dmg-volume-name != '' && inputs.dmg-window-position != '' && inputs.dmg-window-size != '' }}"
+      if: "${{ inputs.dmg-icon-position != '' && inputs.dmg-icon-size != '' && inputs.dmg-link-position != '' && inputs.dmg-text-size != '' && inputs.dmg-volume-icon-path != '' && inputs.dmg-volume-name != '' && inputs.dmg-window-position != '' && inputs.dmg-window-size != '' }}"
       shell: bash
       run: |
         brew install create-dmg
+        BACKGROUND_ARG=""
+        if [ -n "${{ inputs.dmg-background-path }}" ]; then
+          BACKGROUND_ARG='--background "${{ inputs.dmg-background-path }}"'
+        fi
         create-dmg \
         --app-drop-link ${{ inputs.dmg-link-position }} \
-        --background "${{ inputs.dmg-background-path }}" \
+        $BACKGROUND_ARG \
         --hide-extension "${{ inputs.product-name }}.app" \
         --icon "${{ inputs.product-name }}.app" ${{ inputs.dmg-icon-position }} \
         --icon-size ${{ inputs.dmg-icon-size }} \
