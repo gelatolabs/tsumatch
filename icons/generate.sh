@@ -19,16 +19,19 @@ done
 iconutil -c icns -o icon.icns /tmp/tsumatch.iconset
 rm -rf /tmp/tsumatch.iconset
 
+# Cropped mobile icon
+magick icon.png -gravity center -crop 845x845+0+0 +repage mobile.png
+
 # iOS
 mkdir -p ios.iconset
 for size in 20 29 40 58 60 76 80 87 120 152 167 180 1024; do
-    magick icon.png -resize ${size}x${size} ios.iconset/icon_${size}x${size}.png
+    magick mobile.png -resize ${size}x${size} ios.iconset/icon_${size}x${size}.png
 done
 
 # Android
 mkdir -p android/mipmap-mdpi android/mipmap-hdpi android/mipmap-xhdpi android/mipmap-xxhdpi android/mipmap-xxxhdpi
-magick icon.png -resize 48x48 android/mipmap-mdpi/icon.png
-magick icon.png -resize 72x72 android/mipmap-hdpi/icon.png
-magick icon.png -resize 96x96 android/mipmap-xhdpi/icon.png
-magick icon.png -resize 144x144 android/mipmap-xxhdpi/icon.png
-magick icon.png -resize 192x192 android/mipmap-xxxhdpi/icon.png
+magick mobile.png -resize 48x48 android/mipmap-mdpi/icon.png
+magick mobile.png -resize 72x72 android/mipmap-hdpi/icon.png
+magick mobile.png -resize 96x96 android/mipmap-xhdpi/icon.png
+magick mobile.png -resize 144x144 android/mipmap-xxhdpi/icon.png
+magick mobile.png -resize 192x192 android/mipmap-xxxhdpi/icon.png
