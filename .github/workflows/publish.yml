@@ -28,7 +28,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Publish Windows x64 to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -38,7 +38,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish Windows x86 to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -48,7 +48,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish macOS to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -58,7 +58,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish Linux AppImage to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -68,7 +68,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish Linux .deb to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -78,7 +78,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish Android to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -88,7 +88,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish iOS to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -98,7 +98,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish .love to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -108,7 +108,7 @@ jobs:
           version: ${{ steps.get-version.outputs.version }}
 
       - name: Publish web to itch.io
-        uses: ./.github/actions/publish-to-itch-with-butler
+        uses: gelatolabs/publish-to-itch-with-butler@v1
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
