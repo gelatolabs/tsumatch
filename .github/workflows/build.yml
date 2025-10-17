@@ -191,6 +191,16 @@ jobs:
         with:
           name: tsumatch-love
 
+      - name: Patch love version in conf.lua
+        run: |
+          mkdir love-tmp
+          cd love-tmp
+          unzip ../tsumatch.love
+          sed -i.bak 's/t\.version = "[^"]*"/t.version = "12.0"/' conf.lua
+          zip -9 -r ../tsumatch.love .
+          cd ..
+          rm -rf love-tmp
+
       - name: Build Android packages
         id: build-android
         uses: gelatolabs/love-actions-android@v2
