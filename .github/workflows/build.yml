@@ -112,7 +112,7 @@ jobs:
           name: tsumatch-love
 
       - name: Build macOS packages
-        uses: ./.github/actions/macos-portable-unsigned
+        uses: gelatolabs/love-actions-macos-portable-unsigned@v1
         with:
           app-name: ${{ env.APP_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
@@ -193,7 +193,7 @@ jobs:
 
       - name: Build Android packages
         id: build-android
-        uses: ./.github/actions/android
+        uses: gelatolabs/love-actions-android@v2
         with:
           app-name: ${{ env.APP_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
@@ -258,7 +258,7 @@ jobs:
           name: tsumatch-love
 
       - name: Build iOS package
-        uses: ./.github/actions/ios-unsigned
+        uses: gelatolabs/love-actions-ios-unsigned@v1
         with:
           app-name: ${{ env.APP_NAME }}
           bundle-id: ${{ env.BUNDLE_ID }}
