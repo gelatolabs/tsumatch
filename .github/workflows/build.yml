@@ -369,7 +369,7 @@ jobs:
           name: tsumatch-web
 
       - name: Publish Windows x64 to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -379,7 +379,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish Windows x86 to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -389,7 +389,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish macOS to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -399,7 +399,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish Linux AppImage to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -409,7 +409,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish Linux .deb to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -419,7 +419,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish Android to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -429,7 +429,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish iOS to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -439,7 +439,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish .love to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
@@ -449,7 +449,7 @@ jobs:
           version: ${{ needs.get-info.outputs.version-string }}
 
       - name: Publish web to itch.io
-        uses: Oval-Tutu/publish-to-itch-with-butler@1.0.0
+        uses: ./.github/actions/publish-to-itch-with-butler
         with:
           api-key: ${{ secrets.BUTLER_API_KEY }}
           itch_user: gelatolabs
