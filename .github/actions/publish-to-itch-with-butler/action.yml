@@ -51,12 +51,14 @@ runs:
           echo "Unsupported OS/arch: ${{ runner.os }}-${{ runner.arch }}"
           exit 1
         fi
-        mkdir ./tools 2>/dev/null || true
-        pushd tools
-          curl -sSLfo ./butler.zip "https://broth.itch.ovh/butler/${BUTLER_PLATFORM}/LATEST/archive/default"
-          unzip butler.zip
-          chmod +x ./${BUTLER_EXEC}
-        popd
+        if [ ! -f tools/${BUTLER_EXEC} ]; then
+          mkdir -p tools
+          pushd tools
+            curl -sSLfo butler.zip "https://broth.itch.ovh/butler/${BUTLER_PLATFORM}/LATEST/archive/default"
+            unzip butler.zip
+            chmod +x ${BUTLER_EXEC}
+          popd
+        fi
         ./tools/${BUTLER_EXEC} -V
     - name: Upload to itch.io
       env:
