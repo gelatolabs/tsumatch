@@ -5,7 +5,6 @@ on: [push, pull_request, workflow_dispatch]
 env:
   APP_NAME: "Tsumatch!"
   BUNDLE_ID: xyz.gelatolabs.tsumatch
-  LOVE_VERSION: "11.5"
   PROJECT_WEBSITE: "https://gelatolabs.xyz"
   DESCRIPTION: "Match-3 riichi mahjong game"
 
