@@ -1,0 +1,138 @@
+name: Publish Tsumatch!
+
+on:
+  workflow_run:
+    workflows: ["Build Tsumatch!"]
+    types: [completed]
+
+jobs:
+  publish-itch:
+    if: github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from git
+        id: get-version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Publish Windows x64 to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: windows-x64
+          package: tsumatch-windows-x64-zip/Tsumatch!_x64.zip
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish Windows x86 to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: windows-x86
+          package: tsumatch-windows-x86-zip/Tsumatch!_x86.zip
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish macOS to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: mac
+          package: tsumatch-macos-dmg/tsumatch.dmg
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish Linux AppImage to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: linux-appimage
+          package: tsumatch-linux-appimage/tsumatch.AppImage
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish Linux .deb to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: linux-deb
+          package: tsumatch-linux-deb/tsumatch.deb
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish Android to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: android
+          package: tsumatch-android-apk/tsumatch-release.apk
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish iOS to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: ios
+          package: tsumatch-ios-ipa/tsumatch.ipa
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish .love to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: love
+          package: tsumatch-love/tsumatch.love
+          version: ${{ steps.get-version.outputs.version }}
+
+      - name: Publish web to itch.io
+        uses: gelatolabs/publish-to-itch-with-butler@v1
+        with:
+          api-key: ${{ secrets.BUTLER_API_KEY }}
+          itch_user: gelatolabs
+          itch_game: tsumatch
+          channel: web
+          package: tsumatch-web/tsumatch-web.zip
+          version: ${{ steps.get-version.outputs.version }}
+
+  publish-google-play:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+          name: tsumatch-android-aab
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: xyz.gelatolabs.tsumatch
+          releaseFiles: tsumatch-release.aab
+          track: ${{ github.ref == 'refs/heads/main' && 'production' || 'qa' }}
+          status: completed
